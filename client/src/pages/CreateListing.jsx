@@ -21,7 +21,7 @@ export default function CreateListing() {
     type: 'rent',
     bedrooms: 1,
     bathrooms: 1,
-    regularPrice: 50,
+    regularPrice: 10000,
     discountPrice: 0,
     offer: false,
     parking: false,
@@ -31,7 +31,9 @@ export default function CreateListing() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
-  console.log(formData);
+
+  // Remove the input element that was here and keep all the existing functions
+  
   const handleImageSubmit = (e) => {
     if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
       setUploading(true);
@@ -282,7 +284,7 @@ export default function CreateListing() {
               <div className='flex flex-col items-center'>
                 <p>Regular price</p>
                 {formData.type === 'rent' && (
-                  <span className='text-xs'>($ / month)</span>
+                  <span className='text-xs'>(Rs. / month)</span>
                 )}
               </div>
             </div>
