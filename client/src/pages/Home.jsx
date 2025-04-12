@@ -6,6 +6,7 @@ import SwiperCore from 'swiper';
 import 'swiper/css/bundle';
 import ListingItem from '../components/ListingItem';
 import homeImage from '../assets/home.png';
+import Navbar from '../components/Navbar';
 
 
 export default function Home() {
@@ -97,108 +98,133 @@ export default function Home() {
   }, [searchLocation, allListings]);
   SwiperCore.use([Navigation]);
 
-  // Add this before the hero section
   return (
     <div className="bg-white text-gray-800 min-h-screen">
-      {/* Remove the search input section and start directly with hero section */}
-      <div className="max-w-7xl mx-auto px-6 pt-20 pb-10 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-        <div className="space-y-6">
-          <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-            Find your next <span className="text-green-500">perfect</span> <br /> place with ease
-          </h1>
-          <p className="text-gray-600 text-sm md:text-base">
-            HomeQuest is the best place to find your next perfect place to live.
-            We have a wide range of properties for you to choose from.
-          </p>
-          <Link
-            to="/search"
-            className="inline-block bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition"
-          >
-            Let's get started
-          </Link>
+      {/* Hero Section with Search */}
+      <div className="relative h-[600px]">
+        <div className="absolute inset-0">
+          {offerListings && offerListings.length > 0 && (
+            <div
+              style={{
+                background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${offerListings[0].imageUrls[0]})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+              className="w-full h-full"
+            />
+          )}
+          
+          {/* Price Overlay */}
+          {offerListings && offerListings.length > 0 && (
+            <div className="absolute left-12 bottom-32 bg-black bg-opacity-75 text-white p-6 rounded-lg">
+              <h2 className="text-2xl font-semibold mb-2">{offerListings[0].address}</h2>
+              <div className="bg-green-500 text-white px-4 py-1 rounded-md inline-block">
+                ₹{offerListings[0].regularPrice.toLocaleString()}
+              </div>
+            </div>
+          )}
         </div>
-        <div className="rounded-xl overflow-hidden shadow-lg">
-          <img
-            src={homeImage}
-            alt="Modern Home"
-           className=""
-          />
+
+        {/* Rest of the hero section content */}
+        <div className="relative max-w-7xl mx-auto px-6 py-24 text-white">
+          <h1 className="text-5xl font-bold mb-4">Find your next perfect place with ease</h1>
+          <p className="text-xl mb-8">HomeQuest is the best place to find your next perfect place to live.</p>
+          
+          {/* Search Form */}
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-4xl">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <select className="p-3 border rounded-lg text-gray-700">
+                <option>Property type</option>
+                <option value="rent">For Rent</option>
+                <option value="sale">For Sale</option>
+              </select>
+              <input
+                type="number"
+                placeholder="No. rooms"
+                className="p-3 border rounded-lg text-gray-700"
+              />
+              <input
+                type="text"
+                placeholder="Location"
+                className="p-3 border rounded-lg text-gray-700"
+                value={searchLocation}
+                onChange={(e) => setSearchLocation(e.target.value)}
+              />
+              <button className="bg-green-500 text-white p-3 rounded-lg hover:bg-green-600">
+                Search Property
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Swiper Section */}
-      <div className="px-6 md:px-10 lg:px-20 mt-24">
-        <Swiper navigation className="rounded-xl overflow-hidden">
-          {offerListings &&
-            offerListings.length > 0 &&
-            offerListings.map((listing) => (
-              <SwiperSlide key={listing._id}>
-                <div
-                  style={{
-                    background: `url(${listing.imageUrls[0]}) center`,
-                    backgroundSize: 'cover',
-                  }}
-                  className="h-[500px] rounded-xl shadow-lg relative"
-                >
-                  <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-40 p-4 text-white">
-                    <h3 className="text-lg font-semibold">{listing.name}</h3>
-                    <p className="text-sm">{listing.address}</p>
+      {/* Featured Properties Section */}
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        <h2 className="text-3xl font-semibold text-center mb-12">Featured Properties</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {offerListings && offerListings.length > 0 &&
+            offerListings.slice(0, 3).map((listing) => (
+              <div key={listing._id} className="bg-white rounded-lg shadow-lg overflow-hidden">
+                <img
+                  src={listing.imageUrls[0]}
+                  alt={listing.name}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4">
+                  <h3 className="text-xl font-semibold mb-2">{listing.name}</h3>
+                  <p className="text-gray-600 mb-2">{listing.address}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-green-500 font-bold">₹{listing.regularPrice.toLocaleString()}</span>
+                    <Link
+                      to={`/listing/${listing._id}`}
+                      className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                    >
+                      View Details
+                    </Link>
                   </div>
                 </div>
-              </SwiperSlide>
+              </div>
             ))}
-        </Swiper>
+        </div>
       </div>
 
-      {/* Listings Section */}
-      <div className="max-w-7xl mx-auto px-6 py-16 space-y-16">
-        {offerListings && offerListings.length > 0 && (
-          <section>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-3xl font-semibold">Recent Offers</h2>
-              <Link to="/search?offer=true" className="text-green-500 hover:underline text-sm">
-                Show more offers
-              </Link>
+      {/* Properties by Category */}
+      <div className="bg-gray-100 py-16">
+        <div className="max-w-7xl mx-auto px-6">
+          {/* Rent Section */}
+          {rentListings && rentListings.length > 0 && (
+            <div className="mb-16">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-3xl font-semibold">Places for Rent</h2>
+                <Link to="/search?type=rent" className="text-green-500 hover:underline">
+                  View All
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {rentListings.map((listing) => (
+                  <ListingItem listing={listing} key={listing._id} />
+                ))}
+              </div>
             </div>
-            <div className="flex flex-wrap gap-6">
-              {offerListings.map((listing) => (
-                <ListingItem listing={listing} key={listing._id} />
-              ))}
-            </div>
-          </section>
-        )}
+          )}
 
-        {rentListings && rentListings.length > 0 && (
-          <section>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-3xl font-semibold">Places for Rent</h2>
-              <Link to="/search?type=rent" className="text-green-500 hover:underline text-sm">
-                Show more places for rent
-              </Link>
+          {/* Sale Section */}
+          {saleListings && saleListings.length > 0 && (
+            <div>
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-3xl font-semibold">Places for Sale</h2>
+                <Link to="/search?type=sale" className="text-green-500 hover:underline">
+                  View All
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {saleListings.map((listing) => (
+                  <ListingItem listing={listing} key={listing._id} />
+                ))}
+              </div>
             </div>
-            <div className="flex flex-wrap gap-6">
-              {rentListings.map((listing) => (
-                <ListingItem listing={listing} key={listing._id} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {saleListings && saleListings.length > 0 && (
-          <section>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-3xl font-semibold">Places for Sale</h2>
-              <Link to="/search?type=sale" className="text-green-500 hover:underline text-sm">
-                Show more places for sale
-              </Link>
-            </div>
-            <div className="flex flex-wrap gap-6">
-              {saleListings.map((listing) => (
-                <ListingItem listing={listing} key={listing._id} />
-              ))}
-            </div>
-          </section>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
